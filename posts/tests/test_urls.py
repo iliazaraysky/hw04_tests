@@ -17,14 +17,24 @@ class StaticURLTests(TestCase):
             description='Группа Льва Толстого',
         )
 
+        cls.author = User.objects.create_user(
+            username='authorForPosts',
+            first_name='Тестов',
+            last_name='Теcтовский',
+            email='testuser@yatube.ru'
+        )
+
         cls.post = Post.objects.create(
             group=StaticURLTests.group,
             text="Какой-то там текст",
+            author=User.objects.get(username='authorForPosts')
         )
+    def test_print(self):
+        print("POST: ", Post.objects.all())
 
     def setUp(self):
         self.guest_client = Client()
-        self.user = User.objects.create_user(username='TestForTest')
+        self.user = User.objects.create_user(username='testfortest')
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
@@ -38,6 +48,24 @@ class StaticURLTests(TestCase):
         for test_url in url_list:
             response = self.guest_client.get(test_url)
             self.assertEqual(response.status_code, 200)
+
+    def test_response_username_url(self):
+        """
+        Проверка доступности анонимным пользователем,
+        страницы профиля пользователя
+        """
+        user = str(self.user.username)
+        response = self.guest_client.get('/' + user, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_response_username_post_url(self):
+        """
+        Проверка доступности анонимным пользователем,
+        страницы профиля пользователя
+        """
+        response = self.guest_client.get('/authorForPosts/' + '1', follow=True)
+        self.assertEqual(response.status_code, 200)
+
 
     def test_new_page_not_login_user(self):
         """Страница доступна авторизированному пользователю"""
