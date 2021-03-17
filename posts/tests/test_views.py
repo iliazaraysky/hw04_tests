@@ -87,7 +87,7 @@ class ProjectViewsTests(TestCase):
         self.authorized_client.force_login(self.author)
 
         list_of_id = Post.objects.filter(author=self.author).values_list('id',
-                                                                         flat=True)
+                                                                     flat=True)
         url = reverse('post_edit', args=[self.author.username,
                                          random.choice(list_of_id)])
         response = self.authorized_client.get(url)
@@ -104,7 +104,7 @@ class ProjectViewsTests(TestCase):
     def test_post_id_correct_context(self):
         """Проверка содержимого context отдельного поста"""
         list_of_id = Post.objects.filter(author=self.author).values_list('id',
-                                                                         flat=True)
+                                                                    flat=True)
         url = reverse('post', args=[self.author.username,
                                     random.choice(list_of_id)])
         response = self.authorized_client.get(url)
