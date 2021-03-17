@@ -19,9 +19,17 @@ class TestCreateForm(TestCase):
             description='Группа Льва Толстого',
         )
 
+        cls.author = User.objects.create_user(
+            username='authorForPosts',
+            first_name='Тестов',
+            last_name='Теcтовский',
+            email='testuser@yatube.ru'
+        )
+
         cls.post = Post.objects.create(
             group=TestCreateForm.group,
             text="Какой-то там текст",
+            author=User.objects.get(username='authorForPosts'),
         )
 
         cls.form = NewPost()
@@ -33,17 +41,37 @@ class TestCreateForm(TestCase):
         self.authorized_client.force_login(self.user)
 
     def test_form_create(self):
+        """Проверка создания нового поста, авторизированным пользователем"""
         post_count = Post.objects.count()
         form_data = {
-            'group': '1',
+            'group': self.group.id,
             'text': 'Отправить текст',
         }
         response = self.authorized_client.post(reverse('new_post'),
                                                data=form_data,
                                                follow=True)
-
         self.assertRedirects(response, reverse('index'))
         self.assertEqual(Post.objects.count(), post_count + 1)
         self.assertTrue(Post.objects.filter(
             text='Отправить текст',
+            group=TestCreateForm.group).exists())
+
+    def test_form_update(self):
+        """
+        Проверка редактирования поста через форму на странице
+        """
+        self.authorized_client = Client()
+        self.authorized_client.force_login(self.author)
+        url = reverse('post_edit', args=[self.author.username, 1])
+        self.authorized_client.get(url)
+        form_data = {
+            'group': self.group.id,
+            'text': 'Обновленный текст',
+        }
+        self.authorized_client.post(
+            reverse('post_edit', args=[self.author.username, 1]),
+            data=form_data, follow=True)
+
+        self.assertTrue(Post.objects.filter(
+            text='Обновленный текст',
             group=TestCreateForm.group).exists())
