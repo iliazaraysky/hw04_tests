@@ -86,10 +86,10 @@ class ProjectViewsTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.author)
 
-        list_of_id = Post.objects.filter(author=self.author).values_list('id',
+        lst_id = Post.objects.filter(author=self.author).values_list('id',
                                                                      flat=True)
         url = reverse('post_edit', args=[self.author.username,
-                                         random.choice(list_of_id)])
+                                         random.choice(lst_id)])
         response = self.authorized_client.get(url)
         form_fields = {
             'group': forms.fields.ChoiceField,
@@ -103,10 +103,10 @@ class ProjectViewsTests(TestCase):
 
     def test_post_id_correct_context(self):
         """Проверка содержимого context отдельного поста"""
-        list_of_id = Post.objects.filter(author=self.author).values_list('id',
-                                                                    flat=True)
+        lst_id = Post.objects.filter(author=self.author).values_list('id',
+                                                                     flat=True)
         url = reverse('post', args=[self.author.username,
-                                    random.choice(list_of_id)])
+                                    random.choice(lst_id)])
         response = self.authorized_client.get(url)
         post = response.context['full_post']
         author = response.context['author']
