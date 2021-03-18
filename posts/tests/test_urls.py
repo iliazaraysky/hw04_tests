@@ -85,7 +85,8 @@ class StaticURLTests(TestCase):
         url = reverse('post_edit',
                       args=[self.user.username, total_number_of_id])
         response = self.guest_client.get(url)
-        self.assertEqual(response.status_code, 302)
+        # self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/auth/login/?next=' + url)
 
     def test_redirect_author_username_edit_post_url(self):
         """
@@ -115,7 +116,7 @@ class StaticURLTests(TestCase):
         url = reverse('post_edit',
                       args=[self.user.username, total_number_of_id])
         response = self.authorized_client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
     def test_new_page_not_login_user(self):
         """Страница доступна авторизированному пользователю"""
