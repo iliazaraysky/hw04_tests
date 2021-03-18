@@ -117,7 +117,7 @@ class ProjectViewsTests(TestCase):
 
     def test_home_page_show_correct_context(self):
         """Пост отображается на главной странице"""
-        response = self.authorized_client.get('/')
+        response = self.authorized_client.get(reverse('index'))
         first_object = response.context['page'][0]
         post_text_0 = first_object.text
         post_group_0 = first_object.group.title
@@ -128,7 +128,7 @@ class ProjectViewsTests(TestCase):
         """Пост отображается на странице группы"""
 
         response = self.authorized_client.get(
-            reverse('group', kwargs={'slug': 'tolstoy'}))
+            reverse('group', args=[self.group.slug]))
         first_object = response.context['posts'][0]
         post_text_0 = first_object.text
         post_group_0 = first_object.group.title

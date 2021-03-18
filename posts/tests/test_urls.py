@@ -44,7 +44,7 @@ class StaticURLTests(TestCase):
         список URL, где ответ должен быть равен 200
         """
 
-        url_list = ['/', '/group/tolstoy']
+        url_list = [reverse('index'), reverse('group', args=[self.group.slug])]
         for test_url in url_list:
             response = self.guest_client.get(test_url)
             self.assertEqual(response.status_code, 200)
@@ -85,7 +85,6 @@ class StaticURLTests(TestCase):
         url = reverse('post_edit',
                       args=[self.user.username, total_number_of_id])
         response = self.guest_client.get(url)
-        # self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/auth/login/?next=' + url)
 
     def test_redirect_author_username_edit_post_url(self):
@@ -127,7 +126,8 @@ class StaticURLTests(TestCase):
     def test_group_slug_response_not_login_user(self):
         """Проверка доступности созданной группы для всех пользователей"""
 
-        response = self.guest_client.get('/group/tolstoy')
+        response = self.guest_client.get(
+            reverse('group', args=[self.group.slug]))
         self.assertEqual(response.status_code, 200)
 
     def test_new_page_not_login_user(self):
@@ -136,7 +136,7 @@ class StaticURLTests(TestCase):
         перенаправляет анонимного пользователя
         """
 
-        response = self.guest_client.get('/new')
+        response = self.guest_client.get(reverse('new_post'))
         self.assertEqual(response.status_code, 302)
 
     def test_new_page_login_user(self):
@@ -151,7 +151,8 @@ class StaticURLTests(TestCase):
         для авторизированных пользователей
         """
 
-        response = self.authorized_client.get('/group/tolstoy')
+        response = self.authorized_client.get(
+            reverse('group', args=[self.group.slug]))
         self.assertEqual(response.status_code, 200)
 
     def test_new_page_login_user(self):
@@ -171,7 +172,7 @@ class StaticURLTests(TestCase):
 
         template_url_names = {
             'index.html': reverse('index'),
-            'group.html': '/group/tolstoy',
+            'group.html': reverse('group', args=[self.group.slug]),
             'newpost.html': reverse('new_post'),
         }
         for template, reverse_name in template_url_names.items():
