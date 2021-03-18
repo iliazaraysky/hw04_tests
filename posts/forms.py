@@ -2,7 +2,7 @@ from django.forms import ModelForm
 from .models import Post
 
 
-class NewPost(ModelForm):
+class PostForm(ModelForm):
     """
      Если необходимо сделать переопределение verbose_name и help_texts
      непосредственно из формы. После fields указываем

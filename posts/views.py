@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from .models import Post, Group, User
-from .forms import NewPost
+from .forms import PostForm
 from django.shortcuts import redirect
 
 
@@ -29,10 +29,10 @@ def group_posts(request, slug):
 @login_required
 def post_new(request):
     if request.method != 'POST':
-        form = NewPost()
+        form = PostForm()
         return render(request, 'newpost.html', {'form': form})
 
-    form = NewPost(request.POST)
+    form = PostForm(request.POST)
 
     if not form.is_valid():
         return render(request, 'newpost.html', {'form': form})
@@ -67,7 +67,7 @@ def post_view(request, username, post_id):
 def post_edit(request, username, post_id):
     post = get_object_or_404(Post, id=post_id)
     author = get_object_or_404(User, username=username)
-    form = NewPost(request.POST or None, instance=post)
+    form = PostForm(request.POST or None, instance=post)
 
     if request.method == 'POST':
         if request.user != post.author:
@@ -75,7 +75,7 @@ def post_edit(request, username, post_id):
         if form.is_valid():
             form.save()
         return redirect('post', username=post.author, post_id=post.id)
-    form = NewPost(instance=post)
+    form = PostForm(instance=post)
 
     return render(request, 'newpost.html',
                   {'form': form, 'post': post, 'author': author})

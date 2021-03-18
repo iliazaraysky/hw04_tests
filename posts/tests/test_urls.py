@@ -121,7 +121,7 @@ class StaticURLTests(TestCase):
     def test_new_page_not_login_user(self):
         """Страница доступна авторизированному пользователю"""
 
-        response = self.guest_client.get('/')
+        response = self.guest_client.get(reverse('index'))
         self.assertEqual(response.status_code, 200)
 
     def test_group_slug_response_not_login_user(self):
@@ -142,7 +142,7 @@ class StaticURLTests(TestCase):
     def test_new_page_login_user(self):
         """Главная страница доступна авторизированному пользователю"""
 
-        response = self.authorized_client.get('/')
+        response = self.authorized_client.get(reverse('index'))
         self.assertEqual(response.status_code, 200)
 
     def test_group_slug_response_login_user(self):
@@ -157,22 +157,22 @@ class StaticURLTests(TestCase):
     def test_new_page_login_user(self):
         """Страница доступна авторизированному пользователю"""
 
-        response = self.authorized_client.get('/new')
+        response = self.authorized_client.get(reverse('new_post'))
         self.assertEqual(response.status_code, 200)
 
     def test_new_page_not_login_user_redirect(self):
         """Страница перенаправляет анонимного пользователя"""
 
-        response = self.guest_client.get('/new', follow=True)
+        response = self.guest_client.get(reverse('new_post'), follow=True)
         self.assertRedirects(response, '/auth/login/?next=/new')
 
     def test_urls_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон"""
 
         template_url_names = {
-            'index.html': '/',
+            'index.html': reverse('index'),
             'group.html': '/group/tolstoy',
-            'newpost.html': '/new',
+            'newpost.html': reverse('new_post'),
         }
         for template, reverse_name in template_url_names.items():
             with self.subTest():
