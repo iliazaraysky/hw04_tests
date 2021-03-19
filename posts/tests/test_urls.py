@@ -114,7 +114,7 @@ class StaticURLTests(TestCase):
                                                                 flat=True))
         url = reverse('post_edit',
                       args=[self.user.username, total_number_of_id])
-        response = self.authorized_client.get(url)
+        response = self.authorized_client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_new_page_not_login_user(self):
