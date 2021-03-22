@@ -18,6 +18,8 @@ __pycache__/
 
 static/
 posts/static/
+posts/migrations/
 static_files/
+media/
 
 db.sqlite3

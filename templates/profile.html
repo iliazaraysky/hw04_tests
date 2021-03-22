@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load thumbnail %}
 {% block title %}Профиль пользователя {{ author.first_name }} {{ author.last_name }}{% endblock %}
 {% block header %}Профиль пользователя {{ author.first_name }} {{ author.last_name }}{% endblock %}
 {% block content %}
@@ -34,9 +35,13 @@
 
             <div class="col-md-9">
                 {% for page_data in page %}
+
                 <!-- Начало блока с отдельным постом -->
                     <div class="card mb-3 mt-1 shadow-sm">
                             <div class="card-body">
+                                    {% thumbnail page_data.image "960x339" crop="center" upscale=True as img %}
+                                        <img class="card-img" src="{{ img.url }}">
+                                    {% endthumbnail%}
                                     <p class="card-text">
                                             <!-- Ссылка на страницу автора в атрибуте href; username автора в тексте ссылки -->
                                             <a href="{{ page_data.author }}"><strong class="d-block text-gray-dark">@{{ page_data.author }}</strong></a>

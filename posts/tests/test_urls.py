@@ -211,3 +211,15 @@ class StaticURLTests(TestCase):
             with self.subTest():
                 response = self.authorized_client.get(exist)
                 self.assertEqual(response.status_code, 200)
+
+    def test_404_response_code(self):
+        """
+        Если страница не найдена на сайте, возвращает код ответа 404
+        """
+        list_of_id = Post.objects.filter(
+            author=self.author).values_list('id',
+                                            flat=True)
+        non_existent_post = list_of_id[0] - list_of_id[0]
+        url = reverse('post', args=[self.user.username, non_existent_post])
+        response = self.guest_client.get(url, follow=True)
+        self.assertEqual(response.status_code, 404)
