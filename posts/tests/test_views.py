@@ -136,7 +136,7 @@ class ProjectViewsTests(TestCase):
         url = reverse('post', args=[self.author.username,
                                     random.choice(lst_id)])
         response = self.authorized_client.get(url)
-        post = response.context['full_post']
+        post = response.context['post']
         author = response.context['author']
         post_text_0 = post.text
         post_author_0 = author.first_name

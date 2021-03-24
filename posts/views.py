@@ -56,19 +56,20 @@ def profile(request, username):
 def post_view(request, username, post_id):
     author = get_object_or_404(User, username=username)
     full_post = get_object_or_404(Post, id=post_id)
+    post = get_object_or_404(Post, id=post_id)
     all_posts = Post.objects.all().filter(author__username=username)
     counter = all_posts.count()
-    form = CommentForm()
-    comments = full_post.comments.filter()
+    form = CommentForm(request.POST or None)
+    comments = post.comments.all()
     return render(request, 'post.html',
-                  {'author': author, 'full_post': full_post,
-                   'counter': counter, 'form': form})
+                  {'author': author,
+                   'counter': counter, 'form': form, 'comments': comments,
+                   'post': post})
 
 
 @login_required
 def add_comment(request, username, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    author = get_object_or_404(User, username=username)
+    post = get_object_or_404(Post, id=post_id, author__username=username)
     form = CommentForm(request.POST or None)
     if form.is_valid():
         comment = form.save(commit=False)

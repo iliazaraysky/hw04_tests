@@ -47,3 +47,8 @@ class Comment(models.Model):
                                related_name='comments')
     text = models.TextField()
     created = models.DateTimeField("Дата публикации", auto_now_add=True)
+
+    def __str__(self):
+        return self.text
+
+
