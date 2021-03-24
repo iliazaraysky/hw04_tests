@@ -58,9 +58,10 @@
                                         <!-- Дата публикации  -->
                                         <small class="text-muted">{{ full_post.pub_date }}</small>
                                 </div>
+                            {% include 'comments.html' %}
                         </div>
                 </div>
-     </div>
+         </div>
     </div>
 </main>
 {% endblock content %}

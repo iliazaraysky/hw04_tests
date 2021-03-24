@@ -3,7 +3,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, Client
 from django.urls import reverse
 from django import forms
-import random, tempfile, os, pathlib
+from django.conf import settings
+import random, tempfile, shutil
 
 from posts.models import Group, Post
 
@@ -14,6 +15,7 @@ class ProjectViewsTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        settings.MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
         cls.group = Group.objects.create(
             title='Лев Толстой',
@@ -50,6 +52,11 @@ class ProjectViewsTests(TestCase):
                 author=User.objects.get(username='authorForPosts'),
                 image=uploaded
             )
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
 
     def setUp(self):
         self.guest_client = Client()
@@ -133,9 +140,10 @@ class ProjectViewsTests(TestCase):
         author = response.context['author']
         post_text_0 = post.text
         post_author_0 = author.first_name
+        post_image_0 = post.image
         self.assertEqual(post_author_0, 'Тестов')
         self.assertEqual(post_text_0, 'Какой-то там текст')
-
+        self.assertEqual(post_image_0, post.image.name)
 
     def test_home_page_show_correct_context(self):
         """Пост отображается на главной странице"""
@@ -143,8 +151,10 @@ class ProjectViewsTests(TestCase):
         first_object = response.context['page'][0]
         post_text_0 = first_object.text
         post_group_0 = first_object.group.title
+        post_image_0 = first_object.image
         self.assertEqual(post_text_0, 'Какой-то там текст')
         self.assertEqual(post_group_0, 'Лев Толстой')
+        self.assertEqual(post_image_0, self.post.image.name)
 
     def test_group_page_show_correct_context(self):
         """Пост отображается на странице группы"""
@@ -154,8 +164,10 @@ class ProjectViewsTests(TestCase):
         first_object = response.context['posts'][0]
         post_text_0 = first_object.text
         post_group_0 = first_object.group.title
+        post_image_0 = first_object.image
         self.assertEqual(post_text_0, 'Какой-то там текст')
         self.assertEqual(post_group_0, 'Лев Толстой')
+        self.assertEqual(post_image_0, self.post.image.name)
 
     def test_first_page_containse_ten_records(self):
         """Колличество постов на первой странице равно 10"""

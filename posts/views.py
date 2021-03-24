@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from .models import Post, Group, User
-from .forms import PostForm
+from .forms import PostForm, CommentForm
 from django.shortcuts import redirect
 
 
@@ -58,9 +58,24 @@ def post_view(request, username, post_id):
     full_post = get_object_or_404(Post, id=post_id)
     all_posts = Post.objects.all().filter(author__username=username)
     counter = all_posts.count()
+    form = CommentForm()
+    comments = full_post.comments.filter()
     return render(request, 'post.html',
                   {'author': author, 'full_post': full_post,
-                   'counter': counter})
+                   'counter': counter, 'form': form})
+
+
+@login_required
+def add_comment(request, username, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    author = get_object_or_404(User, username=username)
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.author = request.user
+        comment.save()
+    return redirect('post', username=post.author, post_id=post.id)
 
 
 @login_required
