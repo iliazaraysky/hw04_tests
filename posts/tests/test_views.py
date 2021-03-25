@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.cache import cache
 from django.test import TestCase, Client
 from django.urls import reverse
 from django import forms
@@ -192,3 +193,20 @@ class ProjectViewsTests(TestCase):
             with self.subTest(template=template):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
+
+    def test_cach_in_index_page(self):
+        """Проверяем работу кеша на главной странице"""
+        response = self.authorized_client.get(reverse('index'))
+        before_clearing_the_cache = response.content
+
+        post = Post.objects.create(
+            group=ProjectViewsTests.group,
+            text="Новый текст, после кэша",
+            author=User.objects.get(username='authorForPosts'))
+
+        cache.clear()
+
+        response = self.authorized_client.get(reverse('index'))
+        after_clearing_the_cache = response.content
+        self.assertNotEqual(before_clearing_the_cache,
+                            after_clearing_the_cache)

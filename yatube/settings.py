@@ -34,6 +34,11 @@ ALLOWED_HOSTS = [
 
 
 # Application definition
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
 
 INSTALLED_APPS = [
     'about',
@@ -76,11 +81,7 @@ TEMPLATES = [
         },
     },
 ]
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    }
-}
+
 
 WSGI_APPLICATION = 'yatube.wsgi.application'
 
