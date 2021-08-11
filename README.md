@@ -43,3 +43,7 @@
 Python 3.6 +
 
 Работает под ОС Linux, Windows, macOS, BSD
+
+# Ранние сборки проекта
+1. Сообщества. Блог. https://github.com/iliazaraysky/hw02_community
+2. Формы для отправки и редактирования данных на сайте https://github.com/iliazaraysky/hw03_forms
